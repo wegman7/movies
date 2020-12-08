@@ -5,45 +5,43 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "user_list")
-public class UserList {
+@Table(name = "post")
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_list_id")
-    private Long userListId;
+    @Column(name = "post_id")
+    private Long postId;
 
     @NotBlank
     @Size(max = 40)
     private String title;
+
+    @NotBlank
+    @Size(max = 300)
+    private String content;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", nullable = false)
     private User user;
 
-    public UserList() {
+    public Post() {
 
     }
 
-    public UserList(@NotBlank @Size(max = 40) String title, User user) {
+    public Post(@NotBlank @Size(max = 40) String title, String content, User user) {
         this.title = title;
         this.user = user;
+        this.content = content;
     }
 
-    public Long getUserListId() {
-        return userListId;
-    }
+    public Long getPostId() { return postId; }
 
-    public void setUserListId(Long userListId) {
-        this.userListId = userListId;
-    }
+    public void setPostId(Long postId) { this.postId = postId; }
 
     public String getTitle() {
         return title;
@@ -51,6 +49,14 @@ public class UserList {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public User getUser() {
