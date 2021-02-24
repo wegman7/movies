@@ -34,7 +34,7 @@ public class PostService {
         Long userId = jwtTokenProvider.getUserIdFromJWT(jwt);
         User user = userRepository.findById(userId).get();
 
-        Post post = new Post(title, content, user);
+        Post post = new Post(content, user);
         postRepository.save(post);
     }
 
@@ -51,7 +51,6 @@ public class PostService {
             throw new BadRequestException("You are not authorized to update this post!");
         }
 
-        post.setTitle(title);
         post.setContent(content);
         postRepository.save(post);
     }

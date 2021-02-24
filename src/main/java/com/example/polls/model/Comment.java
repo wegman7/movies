@@ -1,27 +1,26 @@
 package com.example.polls.model;
 
 import com.example.polls.model.audit.DateAudit;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
-@Table(name = "post")
-public class Post extends DateAudit {
+@Table(name = "comment")
+public class Comment extends DateAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    @Size(max = 300)
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Post post;
+
     @ManyToOne
-    @JoinColumn(nullable = false)
     private User user;
 
     @ManyToMany
@@ -30,29 +29,14 @@ public class Post extends DateAudit {
     @ManyToMany
     private Set<User> userTags;
 
-    // even though I'm not using this (no getters and setters), this is necessary for deleting comments
-    // when parent post is deleted
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private Set<Comment> comments;
+    public Comment() {}
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Room room;
-
-    public Post() {}
-
-    public Post(@NotBlank @Size(max = 300) String content, User user) {
+    public Comment(@NotBlank String content, Post post, User user, Set<Movie> movieTags, Set<User> userTags) {
         this.content = content;
-        this.user = user;
-    }
-
-    public Post(@NotBlank @Size(max = 300) String content, User user, Set<Movie> movieTags, Set<User> userTags, Room room) {
-        this.content = content;
+        this.post = post;
         this.user = user;
         this.movieTags = movieTags;
         this.userTags = userTags;
-        if (room != null) {
-            this.room = room;
-        }
     }
 
     public Long getId() {
@@ -69,6 +53,14 @@ public class Post extends DateAudit {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public User getUser() {
@@ -93,13 +85,5 @@ public class Post extends DateAudit {
 
     public void setUserTags(Set<User> userTags) {
         this.userTags = userTags;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.polls.controller;
 
 import com.example.polls.exception.AppException;
+import com.example.polls.model.Profile;
 import com.example.polls.model.Role;
 import com.example.polls.model.RoleName;
 import com.example.polls.model.User;
@@ -8,6 +9,7 @@ import com.example.polls.payload.ApiResponse;
 import com.example.polls.payload.JwtAuthenticationResponse;
 import com.example.polls.payload.LoginRequest;
 import com.example.polls.payload.SignupRequest;
+import com.example.polls.repository.ProfileRepository;
 import com.example.polls.repository.RoleRepository;
 import com.example.polls.repository.UserRepository;
 import com.example.polls.security.JwtTokenProvider;
@@ -28,7 +30,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -45,6 +47,9 @@ public class AuthController {
 
     @Autowired
     JwtTokenProvider tokenProvider;
+
+    @Autowired
+    ProfileRepository profileRepository;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -85,6 +90,8 @@ public class AuthController {
         user.setRoles(Collections.singleton(userRole));
 
         User result = userRepository.save(user);
+        Profile profile = new Profile(user);
+        profileRepository.save(profile);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/api/users/{username}")
