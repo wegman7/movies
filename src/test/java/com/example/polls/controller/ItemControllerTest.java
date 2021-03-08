@@ -37,8 +37,8 @@ class ItemControllerTest {
     @Test
     void create() throws Exception {
         Map<String, String> urlVars = new HashMap<String, String>();
-        urlVars.put("description", "pizza");
-        urlVars.put("price", "12");
+        urlVars.put("description", "burger");
+        urlVars.put("price", "999");
         urlVars.put("categoryId", "1");
         JSONObject json = new JSONObject(urlVars);
 

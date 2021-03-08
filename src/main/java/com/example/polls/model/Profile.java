@@ -98,4 +98,20 @@ public class Profile {
     public void setRecommendedMovies(Set<Movie> recommendedMovies) {
         this.recommendedMovies = recommendedMovies;
     }
+
+    public void addLikedMovie(Movie movie) {
+        this.likedMovies.add(movie);
+    }
+
+    public void addRecommendedMovie(Movie movie) {
+        this.recommendedMovies.add(movie);
+    }
+
+    public void addWatchedMovie(Movie movie) {
+        this.watchedMovies.add(movie);
+    }
+
+    public void addWatchlist(Movie movie) {
+        this.watchlist.add(movie);
+    }
 }

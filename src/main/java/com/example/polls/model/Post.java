@@ -38,6 +38,9 @@ public class Post extends DateAudit {
     @ManyToOne(fetch = FetchType.LAZY)
     private Room room;
 
+    @ManyToMany
+    private Set<User> likes;
+
     public Post() {}
 
     public Post(@NotBlank @Size(max = 300) String content, User user) {
@@ -101,5 +104,17 @@ public class Post extends DateAudit {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public Set<User> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<User> likes) {
+        this.likes = likes;
+    }
+
+    public void addLike(User user) {
+        this.likes.add(user);
     }
 }

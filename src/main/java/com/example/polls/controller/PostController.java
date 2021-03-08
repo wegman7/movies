@@ -125,4 +125,16 @@ public class PostController {
         postRepository.deleteById(id);
         return new ResponseEntity<String>("Successfully deleted post.", HttpStatus.OK);
     }
+
+    @PatchMapping(path = "/like/{id}")
+    public ResponseEntity<String> like(@PathVariable("id") Long id, @RequestHeader("Authorization") String jwt) {
+        User user = userService.getUserFromJwt(jwt);
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "Id", id));
+
+        post.addLike(user);
+        postRepository.save(post);
+        System.out.println();
+
+        return new ResponseEntity<String>("Successfully liked post.", HttpStatus.OK);
+    }
 }

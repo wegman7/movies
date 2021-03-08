@@ -33,4 +33,16 @@ public class MovieService {
         }
         return movieTags;
     }
+
+    public Movie getMovieFromMovieTagId(Long id) {
+        Optional<Movie> movie = movieRepository.findByMovieId(id);
+        Movie newMovie;
+        if (movie.isEmpty()) {
+            newMovie = new Movie(id);
+            movieRepository.save(newMovie);
+            return newMovie;
+        } else {
+            return movie.get();
+        }
+    }
 }

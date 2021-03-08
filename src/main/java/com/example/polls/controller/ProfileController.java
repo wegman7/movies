@@ -5,6 +5,7 @@ import com.example.polls.exception.ResourceNotFoundException;
 import com.example.polls.model.Movie;
 import com.example.polls.model.Profile;
 import com.example.polls.model.User;
+import com.example.polls.payload.AddMoviesToListRequest;
 import com.example.polls.payload.CreateProfileRequest;
 import com.example.polls.repository.ProfileRepository;
 import com.example.polls.service.MovieService;
@@ -90,5 +91,48 @@ public class ProfileController {
 
         profileRepository.delete(profile);
         return new ResponseEntity<String>("Successfully deleted profile", HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/add-movie")
+    public ResponseEntity<String> addMovie(
+            @RequestHeader("Authorization") String jwt,
+            @Valid @RequestBody AddMoviesToListRequest addMoviesToListRequest) {
+        User user = userService.getUserFromJwt(jwt);
+        Profile profile = profileRepository.findByUser(user);
+        Movie movie;
+
+        Long likedMovieId = addMoviesToListRequest.getLikedMovieId();
+        Long recommendedMovieId = addMoviesToListRequest.getRecommendedMovieId();
+        Long watchedMovieId = addMoviesToListRequest.getWatchedMovieId();
+        Long watchlistId = addMoviesToListRequest.getWatchlistMovieId();
+
+        if (likedMovieId != null) {
+            movie = movieService.getMovieFromMovieTagId(likedMovieId);
+            if (profile.getLikedMovies().contains(movie)) {
+                throw new BadRequestException("Already liked!");
+            }
+            profile.addLikedMovie(movie);
+        } else if (recommendedMovieId != null) {
+            movie = movieService.getMovieFromMovieTagId(recommendedMovieId);
+            if (profile.getRecommendedMovies().contains(movie)) {
+                throw new BadRequestException("Already recommended!");
+            }
+            profile.addRecommendedMovie(movie);
+        } else if (watchedMovieId != null) {
+            movie = movieService.getMovieFromMovieTagId(watchedMovieId);
+            if (profile.getWatchedMovies().contains(movie)) {
+                throw new BadRequestException("Already on watched list!");
+            }
+            profile.addWatchedMovie(movie);
+        } else if (watchlistId != null) {
+            movie = movieService.getMovieFromMovieTagId(watchlistId);
+            if (profile.getWatchlist().contains(movie)) {
+                throw new BadRequestException("Already on watchlist!");
+            }
+            profile.addWatchlist(movie);
+        }
+        profileRepository.save(profile);
+
+        return new ResponseEntity<>("Successfully added movies.", HttpStatus.OK);
     }
 }
